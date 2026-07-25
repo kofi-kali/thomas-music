@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thomas The Ash Boy — Music Player</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .player {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .header .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ff6b35, #ff4500, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+        
+        .header .subtitle {
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        
+        .now-playing {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .album-art {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.3);
+        }
+        
+        .song-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .song-artist {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .progress-section {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, #ff8c00);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: -4px;
+            width: 14px;
+            height: 14px;
+            background: #ff8c00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.1);
+        }
+        
+        .control-btn.play-btn {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            border-radius: 50%;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+        
+        .control-btn.play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.6);
+        }
+        
+        .volume-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        
+        .volume-icon {
+            color: #888;
+            font-size: 1rem;
+        }
+        
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #ff6b35;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+        
+        .playlist-title {
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            padding: 0 10px;
+        }
+        
+        .playlist {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .playlist::-webkit-scrollbar { width: 4px; }
+        .playlist::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+        
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #999;
+        }
+        
+        .playlist-item:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+        
+        .playlist-item.active {
+            background: rgba(255, 107, 53, 0.15);
+            color: #ff6b35;
+            font-weight: 600;
+        }
+        
+        .playlist-item .track-number { width: 24px; font-size: 0.85rem; color: #666; }
+        .playlist-item .track-info { flex: 1; }
+        .playlist-item .track-name { font-size: 0.9rem; }
+        .playlist-item .track-artist { font-size: 0.75rem; color: #555; }
+        .playlist-item .track-duration { font-size: 0.75rem; color: #555; }
+        
+        .upload-section { text-align: center; margin-top: 15px; }
+        
+        .upload-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: #888;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .upload-btn:hover {
+            border-color: #ff6b35;
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.05);
+        }
+        
+        .file-input { display: none; }
+        
+        .credits {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+        
+        .credits span {
+            background: linear-gradient(135deg, #ff6b35, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 480px) {
+            .player { padding: 20px; }
+            .album-art { width: 120px; height: 120px; font-size: 3rem; }
+            .controls { gap: 15px; }
+            .control-btn { width: 40px; height: 40px; font-size: 1.2rem; }
+            .control-btn.play-btn { width: 55px; height: 55px; font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="header">
+            <div class="logo">THOMAS THE ASH BOY</div>
+            <div class="subtitle">MUSIC PLAYER</div>
+        </div>
+        
+        <div class="now-playing">
+            <div class="album-art" id="albumArt">🎵</div>
+            <div class="song-title" id="songTitle">No Track Selected</div>
+            <div class="song-artist" id="songArtist">Add music to get started</div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-bar-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="time-info">
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="prevBtn" title="Previous">⏮️</button>
+            <button class="control-btn play-btn" id="playBtn" title="Play/Pause">▶️</button>
+            <button class="control-btn" id="nextBtn" title="Next">⏭️</button>
+        </div>
+        
+        <div class="volume-section">
+            <span class="volume-icon">🔈</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+        </div>
+        
+        <div class="playlist-title">Your Playlist</div>
+        <ul class="playlist" id="playlist">
+            <li class="playlist-item" style="color: #555; text-align: center; padding: 30px;">
+                No songs added yet. Upload music below! 🎵
+            </li>
+        </ul>
+        
+        <div class="upload-section">
+            <button class="upload-btn" id="uploadBtn">📁 Add Music Files</button>
+            <input type="file" class="file-input" id="fileInput" accept="audio/*" multiple>
+        </div>
+        
+        <div class="credits">
+            Specially made by <span>Rich</span>
+        </div>
+    </div>
+
+    <script>
+        const audio = new Audio();
+        let playlist = [];
+        let currentIndex = -1;
+        let isPlaying = false;
+        
+        const playBtn = document.getElementById('playBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+        const albumArt = document.getElementById('albumArt');
+        const playlistEl = document.getElementById('playlist');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        audio.volume = 0.7;
+        
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            for (let file of files) {
+                if (file.type.startsWith('audio/')) {
+                    const url = URL.createObjectURL(file);
+                    playlist.push({
+                        name: file.name.replace(/\.[^/.]+$/, ""),
+                        artist: 'Unknown Artist',
+                        url: url,
+                        duration: '--:--'
+                    });
+                }
+            }
+            renderPlaylist();
+            if (currentIndex === -1 && playlist.length > 0) {
+                loadTrack(0);
+            }
+            fileInput.value = '';
+        });
+        
+        function renderPlaylist() {
+            if (playlist.length === 0) {
+                playlistEl.innerHTML = '<li class="playlist-item" style="color: #555; text-align: center; padding: 30px;">No songs added yet. Upload music below! 🎵</li>';
+                return;
+            }
+            playlistEl.innerHTML = playlist.map((track, i) => `
+                <li class="playlist-item ${i === currentIndex ? 'active' : ''}" onclick="loadTrack(${i})">
+                    <span class="track-number">${i + 1}</span>
+                    <span class="track-info">
+                        <div class="track-name">${track.name}</div>
+                        <div class="track-artist">${track.artist}</div>
+                    </span>
+                    <span class="track-duration">${track.duration}</span>
+                </li>
+            `).join('');
+        }
+        
+        function loadTrack(index) {
+            if (index < 0 || index >= playlist.length) return;
+            currentIndex = index;
+            audio.src = playlist[index].url;
+            songTitle.textContent = playlist[index].name;
+            songArtist.textContent = playlist[index].artist;
+            albumArt.textContent = '🎵';
+            renderPlaylist();
+            playAudio();
+        }
+        
+        function playAudio() {
+            audio.play();
+            isPlaying = true;
+            playBtn.textContent = '⏸️';
+        }
+        
+        function pauseAudio() {
+            audio.pause();
+            isPlaying = false;
+            playBtn.textContent = '▶️';
+        }
+        
+        playBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            if (isPlaying) { pauseAudio(); }
+            else {
+                if (!audio.src && playlist.length > 0) { loadTrack(0); }
+                else { playAudio(); }
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            loadTrack((currentIndex - 1 + playlist.length) % playlist.length);
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            loadTrack((currentIndex + 1) % playlist.length);
+        });
+        
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                progressBar.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+                durationEl.textContent = formatTime(audio.duration);
+                if (playlist[currentIndex]) playlist[currentIndex].duration = formatTime(audio.duration);
+            }
+        });
+        
+        audio.addEventListener('ended', () => {
+            loadTrack(currentIndex < playlist.length - 1 ? currentIndex + 1 : 0);
+        });
+        
+        audio.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(audio.duration);
+        });
+        
+        progressContainer.addEventListener('click', (e) => {
+            if (!audio.duration) return;
+            audio.currentTime = (e.offsetX / progressContainer.clientWidth) * audio.duration;
+        });
+        
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value / 100;
+        });
+        
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            return `${Math.floor(seconds / 60)}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
