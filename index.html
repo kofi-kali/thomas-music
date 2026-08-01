@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thomas The Ash Boy — Music Player</title>
+   <title>Blacktom.gh — Music Player</title>
     <link rel="manifest" href="data:application/json,{"name":"Thomas The Ash Boy - Music Player","short_name":"Thomas Music","start_url":"/thomas-music/","display":"standalone","background_color":"#0a0a0a","theme_color":"#ff6b35"}" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -55,7 +55,7 @@
 </head>
 <body>
     <div class="player">
-        <div class="header"><div class="logo">THOMAS THE ASH BOY</div><div class="subtitle">MUSIC PLAYER</div></div>
+        <div class="header"><div class="logo">BLACKTOM.GH</div><div class="subtitle">BLACKTOM MUSIC PLAYER</div></div>
         <div class="now-playing"><div class="album-art" id="albumArt">🎵</div><div class="song-title" id="songTitle">No Track Selected</div><div class="song-artist" id="songArtist">Add music to get started</div></div>
         <div class="progress-section"><div class="progress-bar-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div><div class="time-info"><span id="currentTime">0:00</span><span id="duration">0:00</span></div></div>
         <div class="controls"><button class="control-btn" id="prevBtn">⏮️</button><button class="play-btn" id="playBtn">▶️</button><button class="control-btn" id="nextBtn">⏭️</button></div>
@@ -64,7 +64,7 @@
         <ul class="playlist" id="playlist"><li class="playlist-item" style="color:#555;text-align:center;padding:30px">No songs added yet. Upload music below! 🎵</li></ul>
         <button class="upload-btn" id="uploadBtn">📁 Add Music Files</button>
         <input type="file" class="file-input" id="fileInput" accept="audio/*" multiple>
-        <div class="credits">Specially made by <span>Rich</span></div>
+        <div class="credits">Specially made by <span>Rich</span> for <span>Blacktom.gh</span></div>
     </div>
     <script>
         const audio = new Audio(); let playlist = [], currentIndex = -1, isPlaying = false;
