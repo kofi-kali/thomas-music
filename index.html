@@ -3,87 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Blacktom.gh — Music Player</title>
-    <link rel="manifest" href="data:application/json,{"name":"Thomas The Ash Boy - Music Player","short_name":"Thomas Music","start_url":"/thomas-music/","display":"standalone","background_color":"#0a0a0a","theme_color":"#ff6b35"}" />
+    <title>Blacktom.gh — Media Player</title>
+    <link rel="manifest" href="data:application/json,{...}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Thomas Music">
     <meta name="theme-color" content="#0a0a0a">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .player { background: rgba(255,255,255,0.03); backdrop-filter: blur(30px); border-radius: 24px; padding: 30px; width: 100%; max-width: 450px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        .header { text-align: center; margin-bottom: 25px; }
-        .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: 2px; background: linear-gradient(135deg, #ff6b35, #ff4500, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 5px; }
-        .subtitle { font-size: 0.8rem; color: #666; letter-spacing: 1px; }
-        .album-art { width: 150px; height: 150px; margin: 0 auto 15px; background: linear-gradient(135deg, #ff6b35, #ff4500); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: 0 15px 30px rgba(255,107,53,0.3); }
-        .now-playing { text-align: center; margin-bottom: 25px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
-        .song-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .song-artist { font-size: 0.85rem; color: #888; }
-        .progress-section { margin-bottom: 20px; }
-        .progress-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; cursor: pointer; position: relative; }
+        .player { background: rgba(255,255,255,0.03); backdrop-filter: blur(30px); border-radius: 24px; padding: 25px; width: 100%; max-width: 500px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: 2px; background: linear-gradient(135deg, #ff6b35, #ff4500, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 3px; }
+        .subtitle { font-size: 0.75rem; color: #666; letter-spacing: 1px; }
+        .media-area { text-align: center; margin-bottom: 20px; min-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 16px; overflow: hidden; position: relative; }
+        .media-area video { width: 100%; max-height: 280px; border-radius: 12px; display: none; }
+        .media-area .album-art { font-size: 5rem; }
+        .media-area .no-media { color: #555; font-size: 0.9rem; }
+        .song-title { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 3px; text-align: center; }
+        .song-artist { font-size: 0.8rem; color: #888; text-align: center; margin-bottom: 15px; }
+        .progress-section { margin-bottom: 15px; }
+        .progress-bar-container { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; cursor: pointer; position: relative; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, #ff6b35, #ff8c00); border-radius: 3px; width: 0%; transition: width 0.1s; position: relative; }
-        .progress-bar::after { content: ''; position: absolute; right: -6px; top: -4px; width: 14px; height: 14px; background: #ff8c00; border-radius: 50%; box-shadow: 0 0 10px rgba(255,140,0,0.5); }
-        .time-info { display: flex; justify-content: space-between; color: #666; font-size: 0.75rem; margin-top: 8px; }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 25px; }
-        .control-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: all 0.2s; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .control-btn:hover { background: rgba(255,255,255,0.08); transform: scale(1.1); }
-        .play-btn { width: 65px; height: 65px; background: linear-gradient(135deg, #ff6b35, #ff4500); border-radius: 50%; font-size: 1.8rem; box-shadow: 0 10px 30px rgba(255,107,53,0.4); border: none; color: #fff; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .play-btn:hover { transform: scale(1.1); box-shadow: 0 15px 40px rgba(255,107,53,0.6); }
-        .volume-section { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 0 10px; }
-        .volume-slider { flex: 1; height: 4px; -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 2px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: #ff6b35; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(255,107,53,0.5); }
-        .playlist-title { color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
-        .playlist { list-style: none; max-height: 200px; overflow-y: auto; }
-        .playlist::-webkit-scrollbar { width: 4px; }
+        .progress-bar::after { content: ''; position: absolute; right: -5px; top: -3px; width: 12px; height: 12px; background: #ff8c00; border-radius: 50%; box-shadow: 0 0 10px rgba(255,140,0,0.5); }
+        .time-info { display: flex; justify-content: space-between; color: #666; font-size: 0.7rem; margin-top: 5px; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .control-btn { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .control-btn:hover { background: rgba(255,255,255,0.08); }
+        .play-btn { width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b35, #ff4500); border-radius: 50%; font-size: 1.6rem; box-shadow: 0 10px 25px rgba(255,107,53,0.4); border: none; color: #fff; cursor: pointer; }
+        .play-btn:hover { transform: scale(1.08); }
+        .upload-section { display: flex; gap: 10px; margin-bottom: 15px; }
+        .upload-btn { flex: 1; background: rgba(255,255,255,0.05); color: #888; border: 1px dashed rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; text-align: center; transition: all 0.3s; }
+        .upload-btn:hover { border-color: #ff6b35; color: #ff6b35; }
+        .file-input { display: none; }
+        .playlist-title { color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .playlist { list-style: none; max-height: 180px; overflow-y: auto; }
+        .playlist::-webkit-scrollbar { width: 3px; }
         .playlist::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-        .playlist-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #999; }
+        .playlist-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; color: #999; font-size: 0.85rem; }
         .playlist-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
         .playlist-item.active { background: rgba(255,107,53,0.15); color: #ff6b35; font-weight: 600; }
-        .track-number { width: 24px; font-size: 0.85rem; color: #666; }
+        .playlist-item .media-icon { font-size: 1rem; width: 20px; }
         .track-info { flex: 1; }
-        .track-name { font-size: 0.9rem; }
-        .track-artist { font-size: 0.75rem; color: #555; }
-        .track-duration { font-size: 0.75rem; color: #555; }
-        .upload-btn { background: rgba(255,255,255,0.05); color: #888; border: 1px dashed rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; width: 100%; transition: all 0.3s; }
-        .upload-btn:hover { border-color: #ff6b35; color: #ff6b35; background: rgba(255,107,53,0.05); }
-        .file-input { display: none; }
-        .credits { text-align: center; margin-top: 20px; color: #555; font-size: 0.75rem; letter-spacing: 1px; }
+        .track-name { font-size: 0.8rem; }
+        .track-type { font-size: 0.65rem; color: #555; }
+        .credits { text-align: center; margin-top: 15px; color: #555; font-size: 0.7rem; letter-spacing: 1px; }
         .credits span { background: linear-gradient(135deg, #ff6b35, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
-        @media (max-width:480px) { .player { padding: 20px; } .album-art { width: 120px; height: 120px; font-size: 3rem; } .controls { gap: 15px; } .control-btn { width: 40px; height: 40px; font-size: 1.2rem; } .play-btn { width: 55px; height: 55px; font-size: 1.5rem; } }
+        @media (max-width:480px) { .player { padding: 18px; } .logo { font-size: 1.3rem; } .play-btn { width: 50px; height: 50px; font-size: 1.3rem; } }
     </style>
 </head>
 <body>
     <div class="player">
-        <div class="header"><div class="logo">BLACKTOM.GH</div><div class="subtitle">BLACKTOM MUSIC PLAYER</div></div>
-        <div class="now-playing"><div class="album-art" id="albumArt">🎵</div><div class="song-title" id="songTitle">No Track Selected</div><div class="song-artist" id="songArtist">Add music to get started</div></div>
-        <div class="progress-section"><div class="progress-bar-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div><div class="time-info"><span id="currentTime">0:00</span><span id="duration">0:00</span></div></div>
-        <div class="controls"><button class="control-btn" id="prevBtn">⏮️</button><button class="play-btn" id="playBtn">▶️</button><button class="control-btn" id="nextBtn">⏭️</button></div>
-        <div class="volume-section"><span style="color:#888">🔈</span><input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70"></div>
+        <div class="header"><div class="logo">BLACKTOM.GH</div><div class="subtitle">BLACKTOM MEDIA PLAYER</div></div>
+        
+        <div class="media-area" id="mediaArea">
+            <video id="videoPlayer" controls playsinline></video>
+            <div class="album-art" id="albumArt">🎵</div>
+            <div class="no-media" id="noMedia">Upload music or videos below</div>
+        </div>
+        
+        <div class="song-title" id="songTitle">No Media Selected</div>
+        <div class="song-artist" id="songArtist">Add files to get started</div>
+        
+        <div class="progress-section">
+            <div class="progress-bar-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="time-info"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="prevBtn">⏮️</button>
+            <button class="play-btn" id="playBtn">▶️</button>
+            <button class="control-btn" id="nextBtn">⏭️</button>
+        </div>
+        
+        <div class="upload-section">
+            <button class="upload-btn" id="audioUploadBtn">🎵 Add Audio</button>
+            <button class="upload-btn" id="videoUploadBtn">🎬 Add Video</button>
+        </div>
+        <input type="file" class="file-input" id="audioInput" accept="audio/*" multiple>
+        <input type="file" class="file-input" id="videoInput" accept="video/*" multiple>
+        
         <div class="playlist-title">Your Playlist</div>
-        <ul class="playlist" id="playlist"><li class="playlist-item" style="color:#555;text-align:center;padding:30px">No songs added yet. Upload music below! 🎵</li></ul>
-        <button class="upload-btn" id="uploadBtn">📁 Add Music Files</button>
-        <input type="file" class="file-input" id="fileInput" accept="audio/*" multiple>
+        <ul class="playlist" id="playlist">
+            <li class="playlist-item" style="color:#555;text-align:center;padding:25px">No files added yet 🎵🎬</li>
+        </ul>
+        
         <div class="credits">Specially made by <span>Rich</span> for <span>Blacktom.gh</span></div>
     </div>
+
     <script>
-        const audio = new Audio(); let playlist = [], currentIndex = -1, isPlaying = false;
-        const playBtn = document.getElementById('playBtn'), prevBtn = document.getElementById('prevBtn'), nextBtn = document.getElementById('nextBtn'), progressBar = document.getElementById('progressBar'), progressContainer = document.getElementById('progressContainer'), currentTimeEl = document.getElementById('currentTime'), durationEl = document.getElementById('duration'), volumeSlider = document.getElementById('volumeSlider'), songTitle = document.getElementById('songTitle'), songArtist = document.getElementById('songArtist'), albumArt = document.getElementById('albumArt'), playlistEl = document.getElementById('playlist'), fileInput = document.getElementById('fileInput'), uploadBtn = document.getElementById('uploadBtn');
-        audio.volume = 0.7;
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => { const files = e.target.files; for (let file of files) { if (file.type.startsWith('audio/')) { playlist.push({ name: file.name.replace(/\.[^/.]+$/, ""), artist: 'Unknown Artist', url: URL.createObjectURL(file), duration: '--:--' }); } } renderPlaylist(); if (currentIndex === -1 && playlist.length > 0) loadTrack(0); fileInput.value = ''; });
-        function renderPlaylist() { if (playlist.length === 0) { playlistEl.innerHTML = '<li class="playlist-item" style="color:#555;text-align:center;padding:30px">No songs added yet. Upload music below! 🎵</li>'; return; } playlistEl.innerHTML = playlist.map((t, i) => `<li class="playlist-item ${i === currentIndex ? 'active' : ''}" onclick="loadTrack(${i})"><span class="track-number">${i + 1}</span><span class="track-info"><div class="track-name">${t.name}</div><div class="track-artist">${t.artist}</div></span><span class="track-duration">${t.duration}</span></li>`).join(''); }
-        function loadTrack(i) { if (i < 0 || i >= playlist.length) return; currentIndex = i; audio.src = playlist[i].url; songTitle.textContent = playlist[i].name; songArtist.textContent = playlist[i].artist; albumArt.textContent = '🎵'; renderPlaylist(); playAudio(); }
-        function playAudio() { audio.play(); isPlaying = true; playBtn.textContent = '⏸️'; }
-        function pauseAudio() { audio.pause(); isPlaying = false; playBtn.textContent = '▶️'; }
-        playBtn.addEventListener('click', () => { if (playlist.length === 0) return; isPlaying ? pauseAudio() : (audio.src ? playAudio() : loadTrack(0)); });
+        const audio = new Audio();
+        const video = document.getElementById('videoPlayer');
+        let playlist = [], currentIndex = -1, isPlaying = false, currentType = 'audio';
+        
+        const playBtn = document.getElementById('playBtn'), prevBtn = document.getElementById('prevBtn'), nextBtn = document.getElementById('nextBtn'), progressBar = document.getElementById('progressBar'), progressContainer = document.getElementById('progressContainer'), currentTimeEl = document.getElementById('currentTime'), durationEl = document.getElementById('duration'), songTitle = document.getElementById('songTitle'), songArtist = document.getElementById('songArtist'), albumArt = document.getElementById('albumArt'), mediaArea = document.getElementById('mediaArea'), noMedia = document.getElementById('noMedia'), playlistEl = document.getElementById('playlist'), audioInput = document.getElementById('audioInput'), videoInput = document.getElementById('videoInput'), audioUploadBtn = document.getElementById('audioUploadBtn'), videoUploadBtn = document.getElementById('videoUploadBtn');
+        
+        audio.volume = 0.8;
+        
+        audioUploadBtn.addEventListener('click', () => audioInput.click());
+        videoUploadBtn.addEventListener('click', () => videoInput.click());
+        
+        function addFiles(files, type) {
+            for (let file of files) {
+                if ((type === 'audio' && file.type.startsWith('audio/')) || (type === 'video' && file.type.startsWith('video/'))) {
+                    playlist.push({ name: file.name.replace(/\.[^/.]+$/, ""), type: type, url: URL.createObjectURL(file), duration: '--:--' });
+                }
+            }
+            renderPlaylist();
+            if (currentIndex === -1 && playlist.length > 0) loadTrack(0);
+            audioInput.value = ''; videoInput.value = '';
+        }
+        
+        audioInput.addEventListener('change', (e) => addFiles(e.target.files, 'audio'));
+        videoInput.addEventListener('change', (e) => addFiles(e.target.files, 'video'));
+        
+        function renderPlaylist() {
+            if (playlist.length === 0) { playlistEl.innerHTML = '<li class="playlist-item" style="color:#555;text-align:center;padding:25px">No files added yet 🎵🎬</li>'; return; }
+            playlistEl.innerHTML = playlist.map((t, i) => `<li class="playlist-item ${i === currentIndex ? 'active' : ''}" onclick="loadTrack(${i})"><span class="media-icon">${t.type === 'video' ? '🎬' : '🎵'}</span><span class="track-info"><div class="track-name">${t.name}</div><div class="track-type">${t.type === 'video' ? 'Video' : 'Audio'}</div></span></li>`).join('');
+        }
+        
+        function loadTrack(i) {
+            if (i < 0 || i >= playlist.length) return;
+            currentIndex = i; currentType = playlist[i].type;
+            songTitle.textContent = playlist[i].name;
+            songArtist.textContent = currentType === 'video' ? 'Video Playing' : 'Audio Playing';
+            
+            if (currentType === 'video') {
+                audio.pause(); audio.src = '';
+                video.src = playlist[i].url; video.style.display = 'block';
+                albumArt.style.display = 'none'; noMedia.style.display = 'none';
+                video.load();
+            } else {
+                video.pause(); video.style.display = 'none'; video.src = '';
+                albumArt.style.display = 'block'; albumArt.textContent = '🎵';
+                noMedia.style.display = 'none';
+                audio.src = playlist[i].url;
+            }
+            renderPlaylist();
+            if (isPlaying || currentType === 'video') playMedia();
+        }
+        
+        function playMedia() {
+            if (currentType === 'video') { video.play(); isPlaying = true; playBtn.textContent = '⏸️'; }
+            else { audio.play(); isPlaying = true; playBtn.textContent = '⏸️'; }
+        }
+        
+        function pauseMedia() {
+            if (currentType === 'video') { video.pause(); }
+            else { audio.pause(); }
+            isPlaying = false; playBtn.textContent = '▶️';
+        }
+        
+        playBtn.addEventListener('click', () => { if (playlist.length === 0) return; isPlaying ? pauseMedia() : playMedia(); });
         prevBtn.addEventListener('click', () => { if (playlist.length === 0) return; loadTrack((currentIndex - 1 + playlist.length) % playlist.length); });
         nextBtn.addEventListener('click', () => { if (playlist.length === 0) return; loadTrack((currentIndex + 1) % playlist.length); });
-        audio.addEventListener('timeupdate', () => { if (audio.duration) { progressBar.style.width = (audio.currentTime / audio.duration) * 100 + '%'; currentTimeEl.textContent = formatTime(audio.currentTime); durationEl.textContent = formatTime(audio.duration); if (playlist[currentIndex]) playlist[currentIndex].duration = formatTime(audio.duration); } });
+        
+        function updateProgress() {
+            const media = currentType === 'video' ? video : audio;
+            if (media.duration) {
+                progressBar.style.width = (media.currentTime / media.duration) * 100 + '%';
+                currentTimeEl.textContent = formatTime(media.currentTime);
+                durationEl.textContent = formatTime(media.duration);
+                if (playlist[currentIndex]) playlist[currentIndex].duration = formatTime(media.duration);
+            }
+        }
+        
+        audio.addEventListener('timeupdate', updateProgress);
+        video.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('ended', () => loadTrack(currentIndex < playlist.length - 1 ? currentIndex + 1 : 0));
+        video.addEventListener('ended', () => loadTrack(currentIndex < playlist.length - 1 ? currentIndex + 1 : 0));
         audio.addEventListener('loadedmetadata', () => { durationEl.textContent = formatTime(audio.duration); });
-        progressContainer.addEventListener('click', (e) => { if (!audio.duration) return; audio.currentTime = (e.offsetX / progressContainer.clientWidth) * audio.duration; });
-        volumeSlider.addEventListener('input', () => { audio.volume = volumeSlider.value / 100; });
+        video.addEventListener('loadedmetadata', () => { durationEl.textContent = formatTime(video.duration); });
+        progressContainer.addEventListener('click', (e) => {
+            const media = currentType === 'video' ? video : audio;
+            if (!media.duration) return;
+            media.currentTime = (e.offsetX / progressContainer.clientWidth) * media.duration;
+        });
+        
         function formatTime(s) { if (isNaN(s)) return '0:00'; return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`; }
     </script>
 </body>
